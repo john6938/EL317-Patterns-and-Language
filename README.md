@@ -6,7 +6,7 @@
 ## Usage
 ``` sh
 $ go get github.com/NoahOrberg/EL317-Patterns-and-Language
-$ cd $_
+$ cd $GOPATH/src/$_                        # change dir to project DIR
 $ glide install                            # to install coloring package
 $ cat input_samples | go run coloring.go   # execute
 ```
