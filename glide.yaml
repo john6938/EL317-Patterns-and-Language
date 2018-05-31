@@ -1,0 +1,5 @@
+package: github.com/NoahOrberg/EL317-Patterns-and-Language
+import:
+- package: github.com/aybabtme/color
+  subpackages:
+  - brush

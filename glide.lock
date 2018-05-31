@@ -1,0 +1,8 @@
+hash: 137d7392dcebfba1d9a31cbf940a24c5ec29c6ff698da7190ad1211ddd36ccdd
+updated: 2018-05-31T16:40:48.230972+09:00
+imports:
+- name: github.com/aybabtme/color
+  version: 28ad4cc941d69a60df8d0af1233fd5a2793c2801
+  subpackages:
+  - brush
+testImports: []
