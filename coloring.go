@@ -176,7 +176,7 @@ var (
 
 func main() {
 	// Start server in case when we are running on heroku
-	go setupServer()
+	setupServer()
 	// read sentence
 	si := bufio.NewScanner(os.Stdin)
 	cf := ConsoleFormatter{}
