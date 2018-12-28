@@ -5,21 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/aybabtme/color/brush"
 )
-
-func direction(s string) string {
-	return fmt.Sprintf("%s", brush.Red(s))
-}
-
-func place(s string) string {
-	return fmt.Sprintf("%s", brush.Blue(s))
-}
-
-func time(s string) string {
-	return fmt.Sprintf("%s", brush.Green(s))
-}
 
 var (
 	prepositions = []string{
@@ -189,13 +175,16 @@ var (
 )
 
 func main() {
+	// Start server in case when we are running on heroku
+	setupServer()
 	// read sentence
 	si := bufio.NewScanner(os.Stdin)
+	cf := ConsoleFormatter{}
 	// explain color
 	fmt.Printf("%s %s %s\n",
-		time("time"),
-		place("place"),
-		direction("direction"))
+		cf.time("time"),
+		cf.place("place"),
+		cf.direction("direction"))
 
 	for {
 		if !si.Scan() {
@@ -203,23 +192,7 @@ func main() {
 		}
 		s := si.Text()
 		// processing sentence
-		ss := strings.Split(s, " ")
-		pPos := make([]int, 0, 0)
-		for i, sss := range ss {
-			if contains(sss, prepositions) != -1 {
-				pPos = append(pPos, i)
-			}
-		}
-
-		for _, pos := range pPos {
-			// timeならtime(ss[idx])
-			// placeならplace(ss[idx])
-			// directionならdirection(ss[idx])
-			// TODO: それぞれの前置詞について考える
-			if contains(ss[pos], prepositions) != -1 {
-				ss[pos] = solve(ss, pos)
-			}
-		}
+		ss := processSentence(s, cf)
 
 		// output
 		for _, sss := range ss {
@@ -227,6 +200,28 @@ func main() {
 		}
 		fmt.Println()
 	}
+}
+
+func processSentence(sentence string, formatter ColorFormatter) []string {
+	// processing sentence
+	ss := strings.Split(sentence, " ")
+	pPos := make([]int, 0, 0)
+	for i, sss := range ss {
+		if contains(sss, prepositions) != -1 {
+			pPos = append(pPos, i)
+		}
+	}
+
+	for _, pos := range pPos {
+		// timeならtime(ss[idx])
+		// placeならplace(ss[idx])
+		// directionならdirection(ss[idx])
+		// TODO: それぞれの前置詞について考える
+		if contains(ss[pos], prepositions) != -1 {
+			ss[pos] = solve(ss, pos, formatter)
+		}
+	}
+	return ss
 }
 
 func contains(s string, ss []string) int {
@@ -267,7 +262,7 @@ func isTime(s []string, n int) bool {
 	return false
 }
 
-func solve(s []string, n int) string {
+func solve(s []string, n int, cf ColorFormatter) string {
 	/*   time      ... contains times array
 	 *   direction ... to XXXX (without infinitive)
 	 *   place     ... otherwise
@@ -281,12 +276,12 @@ func solve(s []string, n int) string {
 
 	// 時間関係かどうか判定
 	if isTime(s, n) {
-		return time(pre)
+		return cf.time(pre)
 	}
 
 	// direction 判定(direcsの中のものはすべて方向のものと見る)
 	if contains(pre, direcs) != -1 {
-		return direction(pre)
+		return cf.direction(pre)
 	}
 
 	// それ以外なら、to XXXX(XXXX!=動詞) ならばdirection, それ以外ならplaceとする
@@ -294,10 +289,10 @@ func solve(s []string, n int) string {
 	case "to":
 		// to 動詞を弾く(動詞は予め何個かピックアップしてる中しか見ない)
 		if contains(s[n+1], verbs) == -1 {
-			return direction(pre)
+			return cf.direction(pre)
 		}
 		return pre
 	}
 
-	return place(pre)
+	return cf.place(pre)
 }

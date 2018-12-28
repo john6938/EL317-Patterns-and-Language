@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EL317 Patterns and Language</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/uikit.min.css"/>
+    <script src="js/uikit.min.js"></script>
+    <script src="js/uikit-icons.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <script>
+        'use strict';
+        window.onload = function () {
+            document.getElementById("sentenceButton").onclick = processSentence;
+        };
+        function processSentence() {
+            let sentenceField = document.getElementById("sentenceText");
+            let sentence = sentenceField.value;
+            console.log(sentence);
+            const http = new XMLHttpRequest();
+            let getAddress = document.documentURI+"api/processSentence/" + sentence;
+            console.log(getAddress);
+            http.open("GET",getAddress);
+            http.send();
+            http.onreadystatechange = function () {
+                if (this.readyState==4 && this.status==200) {
+                    document.getElementById("result").innerHTML = this.responseText;
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="uk-container">
+    <h1>Enter your sentence</h1>
+    <div class="uk-margin">
+        <textarea id="sentenceText" class="uk-textarea"></textarea>
+    </div>
+    <button id="sentenceButton" class="uk-button uk-button-default">Process sentence</button>
+    <h2 id="result"></h2>
+</div>
+</body>
+</html>
